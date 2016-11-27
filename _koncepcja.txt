@@ -1,0 +1,34 @@
+Zadanie 13
+Bufor 9 elementowy FIFO
+2 producentów, 2 konsumentów
+Producenci produkują liczby całkowite
+Producent A może zapisywać elementy do bufora jedynie gdy ich suma w buforze będzie większa niż 20
+Odczyt (usunięcie) jest dozwolone, gdy liczba elementów w buforze jest większa niż 3
+=============================
+
+
+Program startowy
+     - alokuje pamięć współdzieloną i przygotowuje semafory
+     - uruchamia potomne procesy - producentów i konsumentów, którzy są synchronizowane semaforami
+     - po określonym czasie kończy stworzone procesy, zwalnia zasoby i kończy pracę
+
+    Producenci i konsumenci operują na kolejce (o określonej pojemności), przechowującej liczby całkowite,
+    działają w nieskończonej pętli. Po każdej operacji wstrzymywani są na określony czas.
+
+    Po każdej zmianie w kolejce jest wypisywana jej zawartość oraz informacja kto ją zmodyfikował.
+
+
+
+Semafory
+
+1) MUTEX (binarny) - zapewnia blokowanie dostępu do kolejki dla pozostałych procesów
+2) FULL - nie pozwala na dodawanie elementów przy pełnej kolejce
+3) EMPTY - nie pozwala na czytanie z pustej kolejki
+4) SIZE_REQUIREMENT_FOR_READING - pozwala na czytanie z kolejki tylko jeśli zawiera ona > 3 elementy
+5) SUM_REQUIREMENT_FOR_PRODUCER_A_WRITING - pozwala producentowi A na dodawanie elementów tylko gdy suma elementów w kolejce jest > 20
+
+
+Implementacja
+    - Język C
+    - System Linux
+    - Semafory System V
