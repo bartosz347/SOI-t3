@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <time.h>
 
 #include "FIFObuffer.h"
 #include "semaphoreManager.h"
@@ -19,7 +20,7 @@
 #define AT __FILE__ ":" TOSTRING(__LINE__)
 
 
-#define RUNNING_TIME 8
+#define RUNNING_TIME 100
 // more precise sleep -> usleep(microseconds)
 
 
@@ -34,6 +35,7 @@ int spawnNewProcess(char* program, char** argList);
 
 int main(int argc, char *argv[])
 {    
+    srand(time(0));
     // Starter program mode
     if(argc == 1) {
         starter();

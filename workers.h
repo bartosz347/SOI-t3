@@ -1,10 +1,10 @@
 #include <time.h>
 
-#define CONSUMER_A_SLEEP_TIME 1
-#define CONSUMER_B_SLEEP_TIME 2
+#define CONSUMER_A_SLEEP_TIME 2000000
+#define CONSUMER_B_SLEEP_TIME 3000000
 
-#define PRODUCER_A_SLEEP_TIME 1
-#define PRODUCER_B_SLEEP_TIME 1
+#define PRODUCER_A_SLEEP_TIME 8000000
+#define PRODUCER_B_SLEEP_TIME 7800000
 
 
 #define producerA 10
@@ -24,8 +24,9 @@ void consumer(sharedData* data, int type)
     printf("New consumer added\n");
     
     while(!data->shouldExit) {
+	printf("Przyszedl konsument %s\n", type == consumerA ? "A" : "B");
+	down(semSetId, SIZE_REQUIREMENT_FOR_READING);
         down(semSetId, FULL); 
-        down(semSetId, SIZE_REQUIREMENT_FOR_READING);
         down(semSetId, MUTEX);
 
         pop(&data->buffer);
@@ -40,7 +41,7 @@ void consumer(sharedData* data, int type)
         printBuffer(&data->buffer);
         up(semSetId, MUTEX);
         
-        sleep(type == consumerA ? CONSUMER_A_SLEEP_TIME : CONSUMER_B_SLEEP_TIME);
+        usleep(type == consumerA ? CONSUMER_A_SLEEP_TIME : CONSUMER_B_SLEEP_TIME);
     }
 }
 
@@ -51,12 +52,14 @@ void producer(sharedData* data, int type)
     printf("New producer added\n");
      
     while (!data->shouldExit) {
+	int item = produceItem();
+	printf("Przyszedl producent %s z %d\n", type == producerA ? "A" : "B", item);
         if(type == producerA)
            down(semSetId, SUM_REQUIREMENT_FOR_PRODUCER_A_WRITING);
         down(semSetId, EMPTY);
         down(semSetId, MUTEX);
 
-        put(&data->buffer, produceItem());
+        put(&data->buffer, item);
 
         up(semSetId, FULL);
         if(getElementsNo(&data->buffer) == 4) // ALTERNATIVE: >=4 and not increase but explicitly set to 1
@@ -71,7 +74,7 @@ void producer(sharedData* data, int type)
         printBuffer(&data->buffer);
         up(semSetId, MUTEX);
         
-        sleep(type == producerA ? PRODUCER_A_SLEEP_TIME : PRODUCER_B_SLEEP_TIME);
+        usleep(type == producerA ? PRODUCER_A_SLEEP_TIME : PRODUCER_B_SLEEP_TIME);
     }
 }
 
